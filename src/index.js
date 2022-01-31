@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
+import FilterBar from './filterbar';
+import './index.css';
+import Navbar from './Navbar';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
