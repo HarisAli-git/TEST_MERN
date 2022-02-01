@@ -43,20 +43,37 @@ app.get("/products", (request, response) => {
 
 app.get("/categories", (request, response) => {
   console.log("/MongoDB_get_categories page accessed");
-  
-  c_model.find().then((result) => {
+  c_model.find()
+  .exec().then((result) => {
       console.log(result);
       response.send(result);
   });
 });
 
-app.get("/:id", (request, response) => {
+app.get("/:id", (request, res, next) => {
   console.log("MongoDB get product :id/ page accessed");
   const id = request.params.id;
-  p_model.findById(id).then((result) => {
-      console.log(result);
-      response.send(result);
-  });
+  p_model.findById(id).then(id)
+    .then(doc => {
+      console.log("From database", doc);
+      if (doc) {
+        res.status(200).json({
+            product: doc,
+            request: {
+                type: 'GET',
+                url: 'http://localhost:3000/products'
+            }
+        });
+      } else {
+        res
+          .status(404)
+          .json({ message: "No valid entry found for provided ID" });
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ error: err });
+    });
 });
 
 app.patch("/:id", (req, res, next) => {
@@ -85,48 +102,30 @@ app.patch("/:id", (req, res, next) => {
 });
 
 app.delete("/:cid", (req, res, next) => {
-  const id = req.params.cid;
-  c_model.findById(id).exec()
-  .then(doc => {
-    console.log(doc);
-  })
-  // c_model.deleteOne({ _id: id })
-  //   .exec()
-  //   .then(result => {
-  //     res.status(200).json({
-  //         message: 'Category deleted',
-  //         request: {
-  //             type: 'POST',
-  //             url: 'http://localhost:3000/categories',
-  //             body: { category: 'String', name: 'String', price: 'Number' }
-  //         }
-  //     });
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //     res.status(500).json({
-  //       error: err
-  //     });
-  //   });
-  // p_model.deleteMany({ category: c1 })
-  //   .exec()
-  //   .then(result => {
-  //     res.status(200).json({
-  //         message: 'Products deleted',
-  //         request: {
-  //             type: 'POST',
-  //             url: 'http://localhost:3000/products',
-  //             body: { category: 'String', name: 'String', price: 'Number' }
-  //         }
-  //     });
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //     res.status(500).json({
-  //       error: err
-  //     });
-  //   });
-});
+  c_model.findById(req.params.cid)
+    .then(category => {
+      if (!category) {
+        return res.status(404).json({
+          message: "Category not found"
+        });
+      }
+      else
+      {
+        console.log(p_model.remove({ category: category.name })
+        .exec()
+        .then(result => {
+          res.status(200).json({
+              message: 'Product deleted',
+              request: {
+                  type: 'POST',
+                  url: 'http://localhost:3000/products',
+                  body: { category: 'String', name: 'String', price: 'Number' }
+              }
+          });
+        })
+        );
+      }
+})});
 
 app.delete("/:id", (req, res, next) => {
   const id = req.params.id;
@@ -140,6 +139,35 @@ app.delete("/:id", (req, res, next) => {
               url: 'http://localhost:3000/products',
               body: { category: 'String', name: 'String', price: 'Number' }
           }
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({
+        error: err
+      });
+    });
+});
+
+app.post("/addCategory", (req, res, next) => {
+  const category = new c_model({
+    _id: new mongoose.Types.ObjectId(),
+    name: req.body.name,
+  });
+  category
+    .save()
+    .then(result => {
+      console.log(result);
+      res.status(201).json({
+        message: "Created Category successfully",
+        createdCategory: {
+            name: result.name,
+            _id: result._id,
+            request: {
+                type: 'GET',
+                url: "http://localhost:3000/categories/" + result._id
+            }
+        }
       });
     })
     .catch(err => {
