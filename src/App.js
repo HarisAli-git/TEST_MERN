@@ -2,6 +2,8 @@ import Navbar from './Navbar';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import FilterBar from './filterbar';
 import NewProduct from './NewProduct'
+import ViewProduct from './ViewProduct'
+import NewCategory from './NewCategory';
 
 function App() {
 
@@ -13,6 +15,8 @@ function App() {
         <Routes>
           <Route exact path="/" element={<FilterBar></FilterBar>} />
           <Route path="/create" element={<NewProduct />} />
+          <Route path="/:id" element={<ViewProduct/>}/>
+          <Route path="/createCat" element={<NewCategory/>}/>
           {/* </Route>
           <Route path="/article/:id">
             <ViewArticle />

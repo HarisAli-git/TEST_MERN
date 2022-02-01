@@ -1,6 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
 
 
+.course-cont a{
+  text-decoration: none;
+}
+
+.img-src-single{
+  max-height: 500px;
+  max-width: 500px;
+}
+
 /* create new article form */
 .create {
   max-width: 400px;
@@ -43,7 +52,7 @@ color: #333;
 padding: 20px;
 display: flex;
 align-items: center;
-max-width: 600px;
+max-width: 800px;
 margin: 0 auto;
 border-bottom: 1px solid #f2f2f2;
 }

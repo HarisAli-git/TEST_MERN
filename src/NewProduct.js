@@ -32,7 +32,8 @@ const NewProduct = () => {
         Post_SignUpMongo(productOBJ).then(response => {
         console.log(response.data)
         }).catch(error => { console.log(error) });
-    } 
+    }
+
     return ( 
         <div className="create">
             <h1><strong>Add a new Product</strong></h1>
@@ -59,15 +60,14 @@ const NewProduct = () => {
                     onChange = {(e) => setPrice(e.target.value)}
                 ></input>
                 <label>Category: </label>
-                <select
+                {console.log(cat)}
+                {<select
                 value = {category}
                 onChange = {(e) => setCategory(e.target.value)}>
-                    <option value="TV">TV</option>
-                    <option value="Smartphone">Smartphone</option>
-                    <option value="Spices">Spices</option>
-                    <option value="HomeAppliance">HomeAppliance</option>
-                    <option value="Books">Books</option>
-                </select>
+                {Object.values(cat).map((cats) => (
+                 <option key={cats._id} value={cats.name}>{cats.name}</option>
+                ))}
+                </select>}
                 {!isPending && <button>Add New Product</button>}
                 {isPending && <button disabled>Adding New Product!...</button>}
             </form>
