@@ -1,5 +1,7 @@
 import { useEffect, useState} from "react";
 import { Post_SignUpMongo, Fetch_cat_Mongo } from "../middleware/RESTapi_caller";
+import { Alert } from "react-bootstrap";
+import { Navigate } from "react-router-dom"
 
 const NewProduct = () => {
 
@@ -9,6 +11,8 @@ const NewProduct = () => {
     const [isPending, setIsPending] = useState(false);
     const [img_src, setImgSrc] = useState(' ');
     const [cat, setCat] = useState(' ');
+    const [alert, setAlert] = useState(' ');
+    const [flag, setFlag] = useState(false);
 
     const FetchCategories = async (e) => {
       const resp = await Fetch_cat_Mongo()
@@ -20,13 +24,42 @@ const NewProduct = () => {
         FetchCategories();
     }, []);
 
+    const checkValidation = (params) => {
+        console.log("Here the Params for Validation: ", params)
+        if (params.name === ' ')
+        {
+            return false;
+        }
+        if (params.category === ' ')
+        {
+            return false;
+        }    
+        return true;    
+    }
+
     const submitForm = async (e) => {
         e.preventDefault();
         const productOBJ = {category, name, price, img_src};
         setIsPending(true);
 
-        const res = await Post_SignUpMongo(productOBJ);
-        console.log(res);
+        setAlert(' ');
+
+        if (checkValidation(productOBJ))
+        {
+            setAlert(<Alert variant="success">
+                Product Successfully Added!
+            </Alert>)
+            const res = await Post_SignUpMongo(productOBJ);
+            setFlag(true);
+            setIsPending(false);
+            console.log(res);
+        }
+        else{
+            setIsPending(false);
+            setAlert(<Alert variant="warning">
+                Name or Category of the product is left empty! Kindly re-input fields!
+            </Alert>)
+        }
     }
 
     return ( 
@@ -63,9 +96,11 @@ const NewProduct = () => {
                  <option key={cats._id} value={cats.name}>{cats.name}</option>
                 ))}
                 </select>}
+                {alert}
                 {!isPending && <button>Add New Product</button>}
                 {isPending && <button disabled>Adding New Product!...</button>}
             </form>
+            {flag && <Navigate to='/' />}
         </div>
         );
     }

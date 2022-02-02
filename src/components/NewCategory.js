@@ -1,19 +1,46 @@
 import { useState} from "react";
-import { Post_SignUpCatMongo, Fetch_cat_Mongo } from "../middleware/RESTapi_caller";
+import { Post_SignUpCatMongo} from "../middleware/RESTapi_caller";
+import { Alert } from "react-bootstrap";
+import { Navigate } from "react-router-dom";
 
 const NewCategory = () => {
 
     const [name, setName] = useState(' ');
     const [isPending, setIsPending] = useState(false);
+    const [alert, setAlert] = useState(' ');
+    const [flag, setFlag] = useState(false);
 
-    const submitForm = (e) => {
-        e.preventDefault();
-        const category = {name};
-        setIsPending(true);
+    const checkValidation = (params) => {
+      console.log("Here the Params for New Category Validation: ", params)
+    
+      if (params.name === ' ')
+      {
+          return false;
+      }
+      return true;    
+    }
 
-        Post_SignUpCatMongo(category).then(response => {
-            console.log(response.data)
-            }).catch(error => { console.log(error) });
+    const submitForm = async (e) => {
+      e.preventDefault();
+      const category = {name};
+      setIsPending(true);
+      setAlert(' ');
+
+      if (checkValidation(category))
+      {
+        const res = await Post_SignUpCatMongo(category);
+        console.log(res);
+        setAlert(<Alert variant="success">
+                Category Successfully Added!
+            </Alert>)
+        setFlag(true);
+      }
+      else{
+        setAlert(<Alert variant="warning">
+                Name or Category of the product is left empty! Kindly re-input fields!
+            </Alert>)
+        setIsPending(false);
+      }
     }
 
     return ( 
@@ -28,9 +55,11 @@ const NewCategory = () => {
                     value = {name}
                     onChange = {(e) => setName(e.target.value)}
                 ></input>
+                {alert}
                 {!isPending && <button>Add New Category</button>}
                 {isPending && <button disabled>Adding New Category!...</button>}
             </form>
+            {flag && <Navigate to='/' />}
         </div>
         );
     }

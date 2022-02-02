@@ -1,9 +1,8 @@
-import React, {Component} from "react"
+import React from "react"
 import Main from '../components/Main'
 import { useEffect, useState} from "react";
-import { PaginatedItems } from "../components/paginate";
 import { Dropdown } from "react-bootstrap"
-import { Post_SignUpMongo, Fetch_cat_Mongo } from "../middleware/RESTapi_caller";
+import { Fetch_cat_Mongo } from "../middleware/RESTapi_caller";
 
 const FilterBar = () =>
 {

@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import {Fetch_Product_Mongo, Delete_Product_Mongo} from "../middleware/RESTapi_caller";
 import { useEffect, useState} from "react";
-import { Route } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { Button, Card } from "react-bootstrap";
 
 
@@ -10,6 +10,7 @@ const ViewProduct = () => {
     const { id } = useParams();
 
     const [prod, setProd] = useState(' ');
+    const [flag, setFlag] = useState(false);
 
     const FetchProduct = async (e) => {
         const res = await Fetch_Product_Mongo(id);
@@ -24,8 +25,7 @@ const ViewProduct = () => {
 
     const deleteProduct = () => {
         Delete_Product_Mongo(id);
-        return (<Route render={({ history}) => (
-        history.push("/") )} />)
+        setFlag(true);
     } 
 
     return (  
@@ -43,6 +43,7 @@ const ViewProduct = () => {
                 <Button variant="danger" onClick={deleteProduct}>Delete!</Button>
                 </Card.Body>
             </Card>)}
+            {flag && <Navigate to='/' />}
         </div>
     );
 }
