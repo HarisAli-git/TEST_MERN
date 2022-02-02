@@ -5,18 +5,15 @@ import { Navigate } from "react-router-dom"
 
 const NewProduct = () => {
 
-    const [name, setName] = useState(' ');
-    const [price, setPrice] = useState(' ');
-    const [category, setCategory] = useState(' ');
+    const [product, setProduct] = useState({})
     const [isPending, setIsPending] = useState(false);
-    const [img_src, setImgSrc] = useState(' ');
-    const [cat, setCat] = useState(' ');
+    const [categories, setCategories] = useState([]);
     const [alert, setAlert] = useState(' ');
     const [flag, setFlag] = useState(false);
 
     const FetchCategories = async (e) => {
       const resp = await Fetch_cat_Mongo()
-      setCat(resp.data)
+      setCategories(resp.data)
     }
 
     useEffect(() => {
@@ -26,30 +23,32 @@ const NewProduct = () => {
 
     const checkValidation = (params) => {
         console.log("Here the Params for Validation: ", params)
-        if (params.name === ' ')
-        {
+        if (params.name) {
             return false;
         }
-        if (params.category === ' ')
-        {
+        if (params.category) {
             return false;
         }    
         return true;    
     }
 
+    const setValue = (name, value) => {
+      setProduct({ ...product, [name]: value }) 
+    }
+
+
     const submitForm = async (e) => {
         e.preventDefault();
-        const productOBJ = {category, name, price, img_src};
         setIsPending(true);
 
         setAlert(' ');
 
-        if (checkValidation(productOBJ))
+        if (checkValidation(product))
         {
             setAlert(<Alert variant="success">
                 Product Successfully Added!
             </Alert>)
-            const res = await Post_SignUpMongo(productOBJ);
+            const res = await Post_SignUpMongo(product);
             setFlag(true);
             setIsPending(false);
             console.log(res);
@@ -70,32 +69,33 @@ const NewProduct = () => {
                 <input
                     type = "text"
                     required
-                    value = {name}
-                    onChange = {(e) => setName(e.target.value)}
+                    value = {product.name}
+                    onChange = {(e) => setValue('name', e.target.value)}
                 ></input>
                 <label>Image Source: </label>
                 <input
                     type = "text"
                     required
-                    value = {img_src}
-                    onChange = {(e) => setImgSrc(e.target.value)}
+                    value = {product.img_src}
+                    onChange = {(e) => setValue('img_src', e.target.value)}
                 ></input>
                 <label>Price: </label>
                 <input
                     type = "number"
                     required
-                    value = {price}
-                    onChange = {(e) => setPrice(e.target.value)}
-                ></input>
+                    value = {product.price}
+                    onChange = {(e) => setValue('price', e.target.value)}
+                />
                 <label>Category: </label>
-                {console.log(cat)}
-                {<select
-                value = {category}
-                onChange = {(e) => setCategory(e.target.value)}>
-                {Object.values(cat).map((cats) => (
-                 <option key={cats._id} value={cats.name}>{cats.name}</option>
-                ))}
-                </select>}
+                <select
+                  value = {product.category}
+                  onChange = {(e) => setValue('category', e.target.value)}
+                >
+                  <option key={'empty'} value=''>Please Select a category</option>
+                  {categories.map((cat) => (
+                    <option key={cat._id} value={cat.name}>{cat.name}</option>
+                  ))}
+                </select>
                 {alert}
                 {!isPending && <button>Add New Product</button>}
                 {isPending && <button disabled>Adding New Product!...</button>}
