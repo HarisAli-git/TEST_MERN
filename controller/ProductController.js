@@ -13,6 +13,7 @@ exports.products_update_product = (req, res, next) => {
   for (const ops of req.body) {
     updateOps[ops.propName] = ops.value;
   }
+
   Product.update({ _id: id }, { $set: updateOps })
     .exec()
     .then(result => {
