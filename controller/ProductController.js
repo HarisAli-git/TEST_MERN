@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { getAllProducts } = require('../handler/ProductHandler');
 const Product = require('../model/product');
 
 exports.products_delete_product = async (req, res, next) => {
@@ -8,11 +9,32 @@ exports.products_delete_product = async (req, res, next) => {
 };
 
 exports.products_get_all = async (req, res) => {
-    console.log("/MongoDB_get_products page accessed");
+  try{
+  console.log("/MongoDB_get_products page accessed");
+  // let {page, size} = req.query;
+  if (!page)
+  {
+    page = 1;
+  }
+  if (!size)
+  {
+    size = 2;
+  }
 
-    const result = await Product.find();
-    console.log(result);
-    res.send(result);
+  const limit = parseInt(2);
+  const skip = (1 - 1) * 2;
+
+  const result = await product.find().limit(limit).skip(skip);
+  res.send({
+    page,
+    size,
+    data: result,
+  });
+
+  }
+  catch (error) {
+    res.sendStatus(500).send(error.message);
+  }
 };
 
 // async (e) => {
