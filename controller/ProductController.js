@@ -7,32 +7,6 @@ exports.products_delete_product = async (req, res, next) => {
   res.send(result);
 };
 
-exports.products_update_product = (req, res, next) => {
-  const id = req.params.id;
-  const updateOps = {};
-  for (const ops of req.body) {
-    updateOps[ops.propName] = ops.value;
-  }
-
-  Product.update({ _id: id }, { $set: updateOps })
-    .exec()
-    .then(result => {
-      res.status(200).json({
-        message: 'Product updated',
-        request: {
-          type: 'GET',
-          url: 'http://localhost:3000/products/' + id
-        }
-      });
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json({
-        error: err
-      });
-    });
-};
-
 exports.products_get_all = async (req, res) => {
     console.log("/MongoDB_get_products page accessed");
 

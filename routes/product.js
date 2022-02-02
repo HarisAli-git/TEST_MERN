@@ -20,8 +20,6 @@ router.post("/addProduct", ProductsController.products_create_product);
 
 router.get("/:id", ProductsController.products_get_product);
 
-router.patch("/:id", ProductsController.products_update_product);
-
 router.delete("/:id", ProductsController.products_delete_product);
 
 module.exports = router;
