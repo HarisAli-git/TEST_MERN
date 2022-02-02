@@ -41,7 +41,6 @@ const FilterBar = () =>
       </Dropdown>
       <br />
       <br />
-      
       <Main value={currentCat}></Main>
     </div>);
   }

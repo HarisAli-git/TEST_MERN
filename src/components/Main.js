@@ -3,7 +3,7 @@ import { Fetch_prod_Mongo} from '../middleware/RESTapi_caller'
 import Paginate from "./paginate";
 import { Link } from "react-router-dom";
 import { useEffect, useState} from "react";
-import { Card, Button } from "react-bootstrap"
+import { Card, Button, Alert } from "react-bootstrap"
 
 const Main = ({value}) => { 
 
@@ -31,11 +31,13 @@ const Main = ({value}) => {
     const currentProducts = Products.slice(indexOfFirstProduct, indexOfLastProduct);        
 
     return (<div>
+      {!currentProducts &&
+        <Alert variant="secondary"> Loading!!! </Alert>}
         <div class="container" className="b-co">
         <div>{<Display products={currentProducts}></Display>}</div>
         <div><Paginate productsPerPage={productPerPage} totalProducts={Products.length} paginate={paginate}/></div>
         </div>
-        </div>)
+      </div>)
 }
 
 const Display = ({products}) => {
