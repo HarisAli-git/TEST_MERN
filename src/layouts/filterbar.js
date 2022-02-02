@@ -3,6 +3,7 @@ import Main from '../components/Main'
 import { useEffect, useState} from "react";
 import { Dropdown } from "react-bootstrap"
 import { Fetch_cat_Mongo } from "../middleware/RESTapi_caller";
+import { Alert } from "react-bootstrap";
 
 const FilterBar = () =>
 {
@@ -21,6 +22,12 @@ const FilterBar = () =>
 
     return(
     <div>
+    
+    {!currentCat &&
+      <Alert variant="info"> Choosen Category: Any Category! </Alert>}
+    {currentCat &&
+      <Alert variant="info"> Choosen Category: {currentCat} </Alert>}
+    
       <Dropdown>
         <Dropdown.Toggle variant="success" id="dropdown-basic">
         Filter By Category
