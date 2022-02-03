@@ -58,6 +58,7 @@ exports.products_get_product = async (request, res) => {
 };
 
 exports.products_create_product = async (req, res, then) => {
+  try {
     const product = new Product({
       _id: new mongoose.Types.ObjectId(),
       category: req.body.category,
@@ -67,5 +68,9 @@ exports.products_create_product = async (req, res, then) => {
     });
     const result = await product.save()
     res.send(result);
+  } catch(e) {
+    res.status(400)
+    res.send(`Something went wrong while saving ==> ${e}`)
+  }
 
   };
