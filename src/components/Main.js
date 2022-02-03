@@ -1,41 +1,80 @@
 import React from "react";
-import { Fetch_prod_Mongo} from '../middleware/RESTapi_caller'
-import Paginate from "./paginate";
+import { FetchProdPaginateMongo} from '../middleware/RESTapi_caller'
 import { Link } from "react-router-dom";
 import { useEffect, useState} from "react";
 import { Card, Button, Alert } from "react-bootstrap"
 
 const Main = ({value}) => { 
 
-    const [Products, setProd] = useState(' ');
-    const [currentPage, SetcurrentPage] = useState(1);
-    const [productPerPage] = useState(3);
+  const [page, setPage] = useState(1);
+  const [Products, setProd] = useState([]);
+  const [limit, setLimit] = useState(5);
+  const [alert, setAlert] = useState(' ');
 
     useEffect(() => {
-        console.log("Mongo Project_Mounted!!!");
-        FetchProjects();
+      console.log("Mongo Project_Mounted!!!");
+      callAxios(1);
+      setLimit(5);
     }, [value])
 
     const FetchProjects  = async() => {
-        const response = await Fetch_prod_Mongo();
-        !value && setProd(response.data); 
-        value && setProd(Object.values(response.data).filter(p => p.category === value));
+        const response = await FetchProdPaginateMongo(1, 2);
+        !value && setProd(response.data.data); 
+        value && setProd((response.data.data).filter(p => p.category === value));
     }
 
-    const paginate = (number) => {
-        SetcurrentPage(number)
-    }
-
-    const indexOfLastProduct = currentPage * productPerPage;
-    const indexOfFirstProduct = indexOfLastProduct - productPerPage;
-    const currentProducts = Products.slice(indexOfFirstProduct, indexOfLastProduct);        
+    const callAxios = async (p1) => {
+      if (p1 > limit)
+      {
+        p1 = limit;
+      }
+      if (p1 < 1)
+      {
+        p1 = 1;
+      }
+      setPage(p1);
+      setAlert(' ')
+      if (value)
+      {
+        console.log(value);
+        const result = await FetchProdPaginateMongo(value, p1, 2);
+        if(result.data.data.length === 0)
+        {
+          setLimit(p1);
+          setAlert(<Alert variant="warning">
+          No More products to Show!
+      </Alert>);
+        }
+        setProd(result.data.data);
+      }
+      else{
+        const result = await FetchProdPaginateMongo(-1, p1, 2);
+        if(result.data.data.length === 0)
+        {
+          setLimit(p1);
+          setAlert(<Alert variant="warning">
+          No More products to Show!
+      </Alert>);
+        }
+        setProd(result.data.data);
+      } 
+    }  
 
     return (<div>
-      {!currentProducts &&
+      {!Products &&
         <Alert variant="secondary"> Loading!!! </Alert>}
         <div class="container" className="b-co">
-        <div>{<Display products={currentProducts}></Display>}</div>
-        <div><Paginate productsPerPage={productPerPage} totalProducts={Products.length} paginate={paginate}/></div>
+        {alert}
+        <div>{<Display products={Products}></Display>}</div>
+        <Button variant="light" onClick={() => callAxios(page - 1)}>
+          {'<<'} Back
+        </Button>
+        <Button variant="secondary">
+          {page}
+        </Button>
+        <Button variant="light" onClick={() => callAxios(page + 1)}>
+          Next {'>>'}
+        </Button>
         </div>
       </div>)
 }
@@ -63,4 +102,4 @@ const Display = ({products}) => {
     return <ul>{a2}</ul>;
 }
 
-export default Main;
+export {Main, Display};

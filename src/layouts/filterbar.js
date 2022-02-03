@@ -1,5 +1,5 @@
 import React from "react"
-import Main from '../components/Main'
+import {Main} from '../components/Main'
 import { useEffect, useState} from "react";
 import { Dropdown } from "react-bootstrap"
 import { Fetch_cat_Mongo } from "../middleware/RESTapi_caller";
