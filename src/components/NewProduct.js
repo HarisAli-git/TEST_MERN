@@ -21,12 +21,17 @@ const NewProduct = () => {
         FetchCategories();
     }, []);
 
+    const isEmptyOrSpaces = (str) => {
+        return str === null || str.match(/^ *$/) !== null;
+    }
+
     const checkValidation = (params) => {
         console.log("Here the Params for Validation: ", params)
-        if (params.name) {
+        
+        if (isEmptyOrSpaces(params.name)) {
             return false;
         }
-        if (params.category) {
+        if (typeof params.category === 'undefined') {
             return false;
         }    
         return true;    

@@ -10,10 +10,14 @@ const NewCategory = () => {
     const [alert, setAlert] = useState(' ');
     const [flag, setFlag] = useState(false);
 
+    const isEmptyOrSpaces = (str) => {
+      return str === null || str.match(/^ *$/) !== null;
+    }
+
     const checkValidation = (params) => {
       console.log("Here the Params for New Category Validation: ", params)
     
-      if (params.name === ' ')
+      if (isEmptyOrSpaces(params.name))
       {
           return false;
       }
@@ -37,7 +41,7 @@ const NewCategory = () => {
       }
       else{
         setAlert(<Alert variant="warning">
-                Name or Category of the product is left empty! Kindly re-input fields!
+                Name of the Category is left empty of is filled with WhiteSpaces! Kindly re-input fields!
             </Alert>)
         setIsPending(false);
       }

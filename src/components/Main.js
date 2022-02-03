@@ -8,7 +8,7 @@ const Main = ({value}) => {
 
   const [page, setPage] = useState(1);
   const [Products, setProd] = useState([]);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(500);
   const [alert, setAlert] = useState(' ');
 
     useEffect(() => {
